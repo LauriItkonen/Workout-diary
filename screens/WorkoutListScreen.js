@@ -6,18 +6,25 @@ import { globalStyles, colors } from '../styles';
 export default function WorkoutListScreen() {
   const workouts = useWorkoutStore((state) => state.workouts); // Get workouts from store
   const deleteWorkout = useWorkoutStore((state) => state.deleteWorkout); // Get the delete function from the store
+  const unit = useWorkoutStore((state) => state.unit); // Get the selected unit
 
-  const renderWorkoutItem = ({ item, index }) => (
-    <View style={styles.workoutItem}>
-      <Text style={globalStyles.text}>Sport: {item.sportType}</Text>
-      <Text style={globalStyles.text}>Distance: {item.distance}</Text>
-      <Text style={globalStyles.text}>Duration: {item.duration}</Text>
-      <Text style={globalStyles.text}>Date: {new Date(item.date).toLocaleDateString()}</Text>
-      <Pressable onPress={() => deleteWorkout(index)} style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </Pressable>
-    </View>
-  );
+  const renderWorkoutItem = ({ item, index }) => {
+    // Convert distance to miles if the unit is 'miles'
+    const convertedDistance = unit === 'miles' ? (item.distance * 0.621371).toFixed(2) : item.distance;
+    const unitLabel = unit === 'miles' ? 'Miles' : 'Km';
+
+    return (
+      <View style={styles.workoutItem}>
+        <Text style={globalStyles.text}>Sport: {item.sportType}</Text>
+        <Text style={globalStyles.text}>Distance: {convertedDistance} {unitLabel}</Text>
+        <Text style={globalStyles.text}>Duration: {item.duration} Min</Text>
+        <Text style={globalStyles.text}>Date: {new Date(item.date).toLocaleDateString()}</Text>
+        <Pressable onPress={() => deleteWorkout(index)} style={styles.deleteButton}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </Pressable>
+      </View>
+    );
+  };
 
   return (
     <View style={globalStyles.container}>
